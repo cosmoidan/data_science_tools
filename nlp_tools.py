@@ -3,10 +3,9 @@ from pandas._libs.missing import NAType
 from pathlib import Path
 from pprint import pp
 import numpy as np
-import openpyxl
 
 
-class SubstringExtractor:
+class NLPTools:
 
     def __init__(self,
                  data_files_dir: Path = None,
@@ -14,6 +13,7 @@ class SubstringExtractor:
                  only_all: bool = False,
                  extraction_column: str = '',
                  id_column: str = '',
+                 count_column: str = '',
                  output_found_column: str = '',
                  validation_column_name: str = '',
                  output_dir: str = 'output',
@@ -32,6 +32,7 @@ class SubstringExtractor:
         self.only_all: bool = only_all
         self.extraction_column: str = extraction_column
         self.id_column: str = id_column
+        self.count_column: str = count_column
         self.validation_column_name: str = validation_column_name
         self.data: pd.DataFrame = pd.DataFrame()
         self.output_found_column: str = output_found_column
@@ -55,10 +56,11 @@ class SubstringExtractor:
         self.mode = mode
 
     def execute(self) -> None:
-        if self.mode not in ['extract', 'validate', 'sample']:
+        if self.mode not in ['extract', 'validate', 'sample', 'count']:
             print(self.resp_mode_unsupported)
             return None
-        self._load_files()
+        else:
+            self._get_data()
         if self.mode in ['extract', 'validate']:
             self._extract_strings()
         elif self.mode == 'sample':
@@ -67,20 +69,31 @@ class SubstringExtractor:
             else:
                 print(self.resp_sample_size_error)
                 return None
+        elif self.mode == 'count':
+            self.scrub_data = False
+            self._count_col_values()
         self._write_output_file()
+
+    def _count_col_values(self) -> None:
+        df = self.data
+        cc = self.count_column
+        total_rows = df[self.id_column].count()
+        non_empty = df[cc][df[cc].notna() & (df[cc] != '')].count()
+        print(f'''Total rows: {total_rows}\nNon empty in {cc} column: {
+              non_empty}\nEmpty in {cc} column: {total_rows - non_empty}''')
 
     def _clean_data(self) -> None:
         # method to clean the data
         def _clean_id_col() -> None:
             # Remove rows with non-finite values in id col
             self.data = self.data[np.isfinite(self.data[self.id_column])]
-            # Ensure there are no NaN values
+            # Ensure there are no NaN values in ID column
             self.data = self.data.dropna(subset=[self.id_column])
-            # Convert 'RecNum' to integers
+            # Convert ID column to integers
             self.data[self.id_column] = self.data[self.id_column].astype(int)
         _clean_id_col()
 
-    def _load_files(self) -> pd.DataFrame:
+    def _get_data(self) -> pd.DataFrame:
         # load the xlsx files from the directory
         try:
             files = list(self.data_files_dir.glob("*.xlsx"))
@@ -289,7 +302,7 @@ def main() -> None:
     output_format: str = 'xlsx'
     output_validation_filename: str = 'altitude_standards_validation'
     output_validation_format = 'xlsx'
-    output_sample_filename: str = 'WIP_RH_VERSION_3c_'
+    output_sample_filename: str = 'WIP_VERSON_3d_DB_'
     output_sample_format: str = 'xlsx'
     substrings: dict = {'MSL': {'regex': r'(?i)(?<=\b|(?<=\d))(MSL|mean\ssea\slevel)(?=\b|/)', 'synonym_mapping': None},
                         'AGL': {'regex': r'(?i)(?<=\b|(?<=\d))(AGL|above\sground\slevel)(?=\b|/)', 'synonym_mapping': None},
@@ -298,18 +311,20 @@ def main() -> None:
                         }
     extraction_column: str = 'CLEANED Summary'
     id_column: str = 'RecNum'
+    count_column: str = 'UAS ALT'
     output_found_substrings_column: str = 'Altitude Standard'
     validation_column_name: str = 'ALT NOTES'
-    sample_size = 400
+    sample_size = 350
     sample_exclude_file: str = ''  #  do not inc. ext. Leave blank for default.
-    mode: str = 'sample'  # from 'sample', 'extract' & 'validate'.
+    mode: str = 'count'  # from 'sample', 'extract', 'validate' & 'count'
 
-    extractor = SubstringExtractor(
+    tools = NLPTools(
         data_files_dir=data_files_dir,
         substrings=substrings,
         only_all=False,
         extraction_column=extraction_column,
         id_column=id_column,
+        count_column=count_column,
         output_found_column=output_found_substrings_column,
         validation_column_name=validation_column_name,
         output_dir=output_dir,
@@ -323,7 +338,7 @@ def main() -> None:
         sample_exclude_file=sample_exclude_file,
         mode=mode,
     )
-    extractor.execute()
+    tools.execute()
 
 
 if __name__ == "__main__":

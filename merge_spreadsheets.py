@@ -96,7 +96,7 @@ def main() -> None:
     PRIMARY_SHEET_NAME = 'WIP_VERSION_3d_DB_colour_coded.xlsx'
     OUTPUT_FN = PRIMARY_SHEET_NAME
     INDEX_COL_NAME = 'RecNum'
-    COPY_ALL = True
+    COPY_ALL = False
 
     merge = MergeSpreadsheets(sheet_dir_path=SHEET_DIR_PATH, output_dir=OUTPUT_DIR,
                               output_fn=OUTPUT_FN, primary_sheet_name=PRIMARY_SHEET_NAME, index_col_name=INDEX_COL_NAME, copy_all=COPY_ALL)

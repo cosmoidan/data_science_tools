@@ -1,3 +1,21 @@
+"""
+Author: Dan Bright, cosmoid@tutu.io
+License: GPLv3.0
+Version: 1.0
+First published: 20 May 2024
+Description: 
+    - A script to perform the following utility functions:
+        * Extract substrings from a spreadsheet column
+        * Validate extracted substrings against a hand-curated validation set
+        * Count the number of non-empty & empty values in a spreadsheet column
+        * Extract a random sample of user-defined size from a spreadsheet (excluding 
+        ids listed in CSV file if required)
+Usage:
+    1) Define config parameters in main()
+    2) Performed function is defined in the 'mode' config variable (in main())
+    3) Run script: python nlp_tools.py
+"""
+
 import pandas as pd
 from pandas._libs.missing import NAType
 from pathlib import Path
@@ -314,7 +332,7 @@ def main() -> None:
     count_column: str = 'UAS ALT'
     output_found_substrings_column: str = 'Altitude Standard'
     validation_column_name: str = 'ALT NOTES'
-    sample_size = 350
+    sample_size: int = 350
     sample_exclude_file: str = ''  #  do not inc. ext. Leave blank for default.
     mode: str = 'count'  # from 'sample', 'extract', 'validate' & 'count'
 

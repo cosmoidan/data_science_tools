@@ -320,7 +320,7 @@ def main() -> None:
     output_format: str = 'xlsx'
     output_validation_filename: str = 'altitude_standards_validation'
     output_validation_format = 'xlsx'
-    output_sample_filename: str = 'WIP_VERSON_3d_DB_'
+    output_sample_filename: str = 'WIP_VERSION_3d_DB_'
     output_sample_format: str = 'xlsx'
     substrings: dict = {'MSL': {'regex': r'(?i)(?<=\b|(?<=\d))(MSL|mean\ssea\slevel)(?=\b|/)', 'synonym_mapping': None},
                         'AGL': {'regex': r'(?i)(?<=\b|(?<=\d))(AGL|above\sground\slevel)(?=\b|/)', 'synonym_mapping': None},

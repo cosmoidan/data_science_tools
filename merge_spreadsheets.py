@@ -34,17 +34,19 @@ class MergeSpreadsheets:
                  primary_sheet_name: str = '',
                  output_dir: str = '',
                  output_fn: str = '',
-                 index_col_name: str = '',
-                 copy_all:bool = False) -> None:
+                 primary_index_col_name: str = '',
+                 merge_index_col_name: str = '',
+                 copy_all: bool = False) -> None:
         self.sheet_dir_path = sheet_dir_path
         self.primary_sheet_name: str = primary_sheet_name
         self.output_dir: str = output_dir
         self.output_fn: str = output_fn
-        self.index_col_name: str = index_col_name
+        self.primary_index_col_name: str = primary_index_col_name
+        self.merge_index_col_name: str = merge_index_col_name
         self.dfs: list[dict] = []
         self.merged: pd.DataFrame = None
         self.primary_df: pd.DataFrame = None
-        self.copy_all:bool = copy_all
+        self.copy_all: bool = copy_all
 
     def _read_sheets(self) -> None:
         df: pd.DataFrame = pd.DataFrame()
@@ -68,13 +70,14 @@ class MergeSpreadsheets:
                 dfs.append(df)
         for update_df in dfs:
             update_dict: dict = update_df.set_index(
-                self.index_col_name).to_dict('index')
+                self.merge_index_col_name).to_dict('index')
             for index, updates in update_dict.items():
                 for col, val in updates.items():
                     if col in self.primary_df.columns or self.copy_all:
-                        self.primary_df.loc[self.primary_df[self.index_col_name]
-                                        == index, col] = val
-        self.primary_df.sort_values(by=self.index_col_name, inplace=True)
+                        self.primary_df.loc[self.primary_df[self.primary_index_col_name]
+                                            == index, col] = val
+        self.primary_df.sort_values(
+            by=self.primary_index_col_name, inplace=True)
 
     def _write_output(self) -> None:
         self.primary_df.to_excel(
@@ -95,11 +98,12 @@ def main() -> None:
     OUTPUT_DIR = '/Users/dan/Dev/scu/InformationExtraction/output/merged'
     PRIMARY_SHEET_NAME = 'WIP_VERSION_3d_DB_colour_coded.xlsx'
     OUTPUT_FN = PRIMARY_SHEET_NAME
-    INDEX_COL_NAME = 'RecNum'
+    PRIMARY_INDEX_COL_NAME = 'RecNum'
+    MERGE_INDEX_COL_NAME = 'RecNum'
     COPY_ALL = False
 
     merge = MergeSpreadsheets(sheet_dir_path=SHEET_DIR_PATH, output_dir=OUTPUT_DIR,
-                              output_fn=OUTPUT_FN, primary_sheet_name=PRIMARY_SHEET_NAME, index_col_name=INDEX_COL_NAME, copy_all=COPY_ALL)
+                              output_fn=OUTPUT_FN, primary_sheet_name=PRIMARY_SHEET_NAME, primary_index_col_name=PRIMARY_INDEX_COL_NAME, merge_index_col_name=MERGE_INDEX_COL_NAME, copy_all=COPY_ALL)
     merge.exe()
 
 

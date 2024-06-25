@@ -315,10 +315,10 @@ def main() -> None:
     # configure and run the script
     data_files_dir: Path = Path(
         '/Users/dan/Dev/scu/InformationExtraction/data')
-    output_dir: str = '/Users/dan/Dev/scu/InformationExtraction/output/sampler'
-    output_filename: str = 'altitude_standards'
+    output_dir: str = '/Users/dan/Dev/scu/InformationExtraction/output/substring_extractor'
+    output_filename: str = 'alt_stand_validation'
     output_format: str = 'xlsx'
-    output_validation_filename: str = 'altitude_standards_validation'
+    output_validation_filename: str = 'alt_stand_validation'
     output_validation_format = 'xlsx'
     output_sample_filename: str = 'WIP_VERSION_3d_DB_'
     output_sample_format: str = 'xlsx'
@@ -334,7 +334,7 @@ def main() -> None:
     validation_column_name: str = 'ALT NOTES'
     sample_size: int = 350
     sample_exclude_file: str = ''  #  do not inc. ext. Leave blank for default.
-    mode: str = 'count'  # from 'sample', 'extract', 'validate' & 'count'
+    mode: str = 'validate'  # from 'sample', 'extract', 'validate' & 'count'
 
     tools = NLPTools(
         data_files_dir=data_files_dir,

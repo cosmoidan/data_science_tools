@@ -30,14 +30,14 @@ from pprint import pp
 class MergeSpreadsheets:
 
     def __init__(self,
-                 sheet_dir_path: str = '',
+                 sheets_dir_path: str = '',
                  primary_sheet_name: str = '',
                  output_dir: str = '',
                  output_fn: str = '',
                  primary_index_col_name: str = '',
                  merge_index_col_name: str = '',
                  copy_all: bool = False) -> None:
-        self.sheet_dir_path = sheet_dir_path
+        self.sheets_dir_path = sheets_dir_path
         self.primary_sheet_name: str = primary_sheet_name
         self.output_dir: str = output_dir
         self.output_fn: str = output_fn
@@ -50,7 +50,7 @@ class MergeSpreadsheets:
 
     def _read_sheets(self) -> None:
         df: pd.DataFrame = pd.DataFrame()
-        files: list[Path] = list(Path(self.sheet_dir_path).glob("*.xlsx"))
+        files: list[Path] = list(Path(self.sheets_dir_path).glob("*.xlsx"))
         if not files:
             raise Exception("No files found in the specified directory.")
         for file in files:
@@ -94,15 +94,15 @@ class MergeSpreadsheets:
 
 
 def main() -> None:
-    SHEET_DIR_PATH = '/Users/dan/Dev/scu/InformationExtraction/data'
+    PRIMARY_SHEET_NAME = 'WIP_VERSON_3d_DB_rand_range(53-17286)_DB_COMPLETE.xlsx'
+    SHEETS_DIR_PATH = '/Users/dan/Dev/scu/InformationExtraction/data'
     OUTPUT_DIR = '/Users/dan/Dev/scu/InformationExtraction/output/merged'
-    PRIMARY_SHEET_NAME = 'WIP_VERSION_3d_DB_colour_coded.xlsx'
-    OUTPUT_FN = PRIMARY_SHEET_NAME
+    OUTPUT_FN = 'alt_standard_validation_data.xlsx'
     PRIMARY_INDEX_COL_NAME = 'RecNum'
     MERGE_INDEX_COL_NAME = 'RecNum'
     COPY_ALL = False
 
-    merge = MergeSpreadsheets(sheet_dir_path=SHEET_DIR_PATH, output_dir=OUTPUT_DIR,
+    merge = MergeSpreadsheets(sheets_dir_path=SHEETS_DIR_PATH, output_dir=OUTPUT_DIR,
                               output_fn=OUTPUT_FN, primary_sheet_name=PRIMARY_SHEET_NAME, primary_index_col_name=PRIMARY_INDEX_COL_NAME, merge_index_col_name=MERGE_INDEX_COL_NAME, copy_all=COPY_ALL)
     merge.exe()
 
